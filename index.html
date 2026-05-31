@@ -624,6 +624,29 @@ body{
 .light-mode table { color: #3A3D42 !important; }
 .light-mode table th, .light-mode table td { border-color: rgba(0,0,0,.08) !important; color: #4A4D52 !important; }
 .confetti-piece { position:fixed; pointer-events:none; z-index:9999; border-radius:2px; animation:confettiFall linear forwards; }
+
+/* ── SKIP LINK ── */
+.skip-link { position:absolute; top:-100px; left:0; background:var(--violet); color:#fff; padding:8px 16px; z-index:10000; font-family:var(--mono); font-size:.8rem; border-radius:0 0 8px 0; text-decoration:none; transition:top .3s }
+.skip-link:focus { top:0 }
+
+/* ── COOKIE BANNER ── */
+.cookie-banner { position:fixed; bottom:0; left:0; right:0; background:rgba(10,15,30,.95); border-top:1px solid rgba(255,255,255,.1); backdrop-filter:blur(12px); z-index:10001; padding:14px 24px; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; font-family:var(--mono); font-size:.75rem; color:var(--muted); transition:transform .3s ease, opacity .3s ease }
+.cookie-banner.hidden { transform:translateY(100%); opacity:0; pointer-events:none }
+.cookie-banner button { all:unset; cursor:pointer; font-family:var(--sans); font-weight:700; font-size:.8rem; padding:8px 20px; border-radius:8px; background:var(--violet); color:#fff; transition:all .2s }
+.cookie-banner button:hover { filter:brightness(1.2) }
+.cookie-banner button.secondary { background:transparent; border:1px solid var(--muted); color:var(--txt) }
+.cookie-banner a { color:var(--mint); text-decoration:underline }
+
+/* ── PRIVACY MODAL ── */
+.privacy-modal { position:fixed; inset:0; z-index:10002; background:rgba(0,0,0,.7); display:none; align-items:center; justify-content:center; padding:24px }
+.privacy-modal.open { display:flex }
+.privacy-modal-inner { background:var(--bg); border:1px solid rgba(255,255,255,.1); border-radius:var(--rl); max-width:600px; width:100%; max-height:80vh; overflow-y:auto; padding:28px; backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); color:var(--txt); font-size:.85rem; line-height:1.7; font-family:var(--mono) }
+.privacy-modal-inner h2 { font-size:1.5rem; margin-bottom:16px; color:var(--mint) }
+.privacy-modal-inner h3 { font-size:1.1rem; margin:20px 0 8px; color:var(--violet) }
+.privacy-modal-inner p { margin-bottom:12px; color:var(--muted) }
+.privacy-modal-inner a { color:var(--mint) }
+.privacy-modal-inner button { all:unset; cursor:pointer; display:block; margin:24px auto 0; font-family:var(--sans); font-weight:700; font-size:.85rem; padding:10px 28px; border-radius:10px; background:linear-gradient(135deg,var(--violet),var(--mint)); color:var(--bg); transition:all .2s }
+.privacy-modal-inner button:hover { transform:scale(1.05) }
 @keyframes confettiFall { 0%{transform:translateY(-20px) rotate(0deg);opacity:1} 100%{transform:translateY(110vh) rotate(720deg);opacity:0} }
 .footer{text-align:center;margin-top:22px;font-family:var(--mono);font-size:.7rem;
   color:rgba(107,122,150,.45);letter-spacing:.05em}
@@ -672,6 +695,7 @@ body{
 </style>
 </head>
 <body>
+<a href="#card" class="skip-link">Skip to main content</a>
 <div id="reveal-overlay" style="position:fixed;inset:0;z-index:99990;display:none;align-items:center;justify-content:center;flex-direction:column;background:var(--bg);">
   <div style="font-family:var(--mono);font-size:.78rem;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:24px;" id="revScanText">Analysing your profile…</div>
   <div style="width:260px;height:2px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;margin-bottom:40px;">
@@ -688,7 +712,7 @@ body{
     </div>
   </div>
 </div>
-<button class="settings-gear" onclick="toggleSettings()" title="Settings" aria-label="Settings">⚙️</button>
+<button class="settings-gear" onclick="toggleSettings()" title="Settings" aria-label="Settings" aria-expanded="false" aria-controls="settingsPanel">⚙️</button>
 <div class="settings-panel" id="settingsPanel" role="dialog" aria-label="Settings panel">
   <h4 id="settingsThemeLabel">Theme</h4>
   <div class="theme-btns">
@@ -731,7 +755,7 @@ body{
     <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
   </div>
   <div class="card" id="card"></div>
-  <div class="footer" id="footerText">made with 💚 for the linux community</div>
+  <div class="footer" id="footerText">made with 💚 for the linux community · <a href="#" onclick="openPrivacy();return false" style="color:inherit;text-decoration:underline">Privacy Policy</a></div>
   <div class="footer" id="footerArchText" style="display:none">made with 💚 and absolutely no scientific methodology</div>
 </div>
 
@@ -1155,179 +1179,179 @@ const QS = [
    ]},
   {id:2, text:"What matters most in your ideal OS?",
    opts:[
-    {l:'A',i:'😌',m:'Just works out of the box', s:'Zero config, ready immediately', v:{ease:3}, sig:['wantsEase','configNone']},
-    {l:'B',i:'🏔️',m:'Absolute stability', s:'Never breaks, LTS forever', v:{stable:3}, sig:['wantsStable']},
-    {l:'C',i:'🚀',m:'Raw performance', s:'Squeeze every CPU cycle', v:{perf:3}, sig:['wantsPerf']},
-    {l:'D',i:'🎨',m:'Full customisation', s:'My system, my rules', v:{custom:3}, sig:['wantsCustom']},
+    {l:'A',i:'😌',m:'Just works out of the box', s:'Zero config, ready immediately', v:{ease:3}, sig:['wantsEase','configNone'], boost:'ubuntu,mint,zorin,elementary,popos'},
+    {l:'B',i:'🏔️',m:'Absolute stability', s:'Never breaks, LTS forever', v:{stable:3}, sig:['wantsStable'], boost:'debian,mx,opensuse'},
+    {l:'C',i:'🚀',m:'Raw performance', s:'Squeeze every CPU cycle', v:{perf:3}, sig:['wantsPerf'], boost:'clearlinux,cachyos,garuda,gentoo,nobara'},
+    {l:'D',i:'🎨',m:'Full customisation', s:'My system, my rules', v:{custom:3}, sig:['wantsCustom'], boost:'arch,gentoo,void,artix,nixos'}
    ]},
   {id:3, text:"How do you want updates delivered?",
    opts:[
-    {l:'A',i:'🐢',m:'Rare & tested', s:'Update once a year is enough', v:{stable:3}, sig:['wantsStable','wantsStableRelease']},
-    {l:'B',i:'📅',m:'Regular point releases', s:'Every 6–12 months is perfect', v:{stable:2,ease:1}, sig:['wantsStableRelease']},
-    {l:'C',i:'🔄',m:'Rolling release', s:'Always have the latest packages', v:{rolling:3,perf:1}, sig:['wantsRolling']},
-    {l:'D',i:'🩸',m:'Bleeding edge', s:'I want it before it\'s stable', v:{rolling:3,perf:2,custom:2}, sig:['wantsRolling','wantsPerf','advanced']},
+    {l:'A',i:'🐢',m:'Rare & tested', s:'Update once a year is enough', v:{stable:3}, sig:['wantsStable','wantsStableRelease'], boost:'debian,mx,opensuse'},
+    {l:'B',i:'📅',m:'Regular point releases', s:'Every 6–12 months is perfect', v:{stable:2,ease:1}, sig:['wantsStableRelease'], boost:'ubuntu,fedora,popos,omarchy'},
+    {l:'C',i:'🔄',m:'Rolling release', s:'Always have the latest packages', v:{rolling:3,perf:1}, sig:['wantsRolling'], boost:'manjaro,endeavour,garuda,void,artix,cachyos,solus'},
+    {l:'D',i:'🩸',m:'Bleeding edge', s:'I want it before it\'s stable', v:{rolling:3,perf:2,custom:2}, sig:['wantsRolling','wantsPerf','advanced'], boost:'arch,gentoo,void'}
    ]},
   {id:4,text:"What's your relationship with system crashes?",
    opts:[
-    {l:'A',i:'😱',m:'One crash and I\'m switching back', s:'Stability is non-negotiable', v:{stable:3,ease:1}, sig:['fearBreaking','wantsStable','beginner']},
-    {l:'B',i:'😤',m:'Annoying but I fix it', s:'I can handle occasional issues', v:{stable:1,cli:1}, sig:['intermediate','someTerminal']},
-    {l:'C',i:'🤓',m:'Opportunity to learn', s:'Debugging is half the fun', v:{cli:2,custom:2}, sig:['advanced','likeTerminal','fearBoring']},
-    {l:'D',i:'😈',m:'I caused it on purpose', s:'Rolling back snapshots is fun', v:{rolling:1,custom:3,cli:3}, sig:['poweruser','liveTerminal','wantsCustom']},
+    {l:'A',i:'😱',m:'One crash and I\'m switching back', s:'Stability is non-negotiable', v:{stable:3,ease:1}, sig:['fearBreaking','wantsStable','beginner'], boost:'debian,mx,mint'},
+    {l:'B',i:'😤',m:'Annoying but I fix it', s:'I can handle occasional issues', v:{stable:1,cli:1}, sig:['intermediate','someTerminal'], boost:'fedora,opensuse,popos'},
+    {l:'C',i:'🤓',m:'Opportunity to learn', s:'Debugging is half the fun', v:{cli:2,custom:2}, sig:['advanced','likeTerminal','fearBoring'], boost:'arch,endeavour,void,gentoo'},
+    {l:'D',i:'😈',m:'I caused it on purpose', s:'Rolling back snapshots is fun', v:{rolling:1,custom:3,cli:3}, sig:['poweruser','liveTerminal','wantsCustom'], boost:'opensuse,garuda,nixos'}
    ]},
   {id:5,text:"What would make you switch distros?",
    opts:[
-    {l:'A',i:'💥',m:'One bad update that breaks things', s:'Stability is everything', v:{stable:3}, sig:['fearBreaking','wantsStable']},
-    {l:'B',i:'🐌',m:'It starts feeling slow', s:'Performance matters to me', v:{perf:2,rolling:1}, sig:['wantsPerf','fearOutdated']},
-    {l:'C',i:'🔄',m:'I just wanted something new', s:'No complaints, just exploring', v:{rolling:2,custom:1}, sig:['fearBoring','wantsRolling']},
-    {l:'D',i:'😒',m:'Lack of customisation', s:'I need full control', v:{custom:2,cli:1}, sig:['fearBoring','wantsCustom']},
+    {l:'A',i:'💥',m:'One bad update that breaks things', s:'Stability is everything', v:{stable:3}, sig:['fearBreaking','wantsStable'], boost:'debian,mx,mint'},
+    {l:'B',i:'🐌',m:'It starts feeling slow', s:'Performance matters to me', v:{perf:2,rolling:1}, sig:['wantsPerf','fearOutdated'], boost:'clearlinux,cachyos,gentoo,nobara'},
+    {l:'C',i:'🔄',m:'I just wanted something new', s:'No complaints, just exploring', v:{rolling:2,custom:1}, sig:['fearBoring','wantsRolling'], boost:'endeavour,void,artix,solus,omarchy'},
+    {l:'D',i:'😒',m:'Lack of customisation', s:'I need full control', v:{custom:2,cli:1}, sig:['fearBoring','wantsCustom'], boost:'arch,gentoo,void,nixos'}
    ]},
 
   // Part 2: Performance & Lightweight — Q6-Q10 (indices 5-9)
   {id:6, text:"How powerful is your machine?",
    opts:[
-    {l:'A',i:'💾',m:'Old / low-end', s:'Under 4 GB RAM, old CPU', v:{light:3}, sig:['oldHardware']},
-    {l:'B',i:'💻',m:'Average laptop', s:'4–8 GB RAM, dual core', v:{light:1,ease:1}, sig:[]},
-    {l:'C',i:'🖥️',m:'Decent desktop', s:'8–16 GB RAM, recent CPU', v:{perf:1,custom:1}, sig:['goodHardware']},
-    {l:'D',i:'🚀',m:'High-end enthusiast rig', s:'32 GB+ RAM, top-tier GPU', v:{perf:2,gaming:1,beauty:1}, sig:['highEndHardware','gaming']},
+    {l:'A',i:'💾',m:'Old / low-end', s:'Under 4 GB RAM, old CPU', v:{light:3}, sig:['oldHardware'], boost:'mx,peppermint,alpine,artix'},
+    {l:'B',i:'💻',m:'Average laptop', s:'4–8 GB RAM, dual core', v:{light:1,ease:1}, sig:[], boost:'ubuntu,mint,fedora'},
+    {l:'C',i:'🖥️',m:'Decent desktop', s:'8–16 GB RAM, recent CPU', v:{perf:1,custom:1}, sig:['goodHardware'], boost:'popos,manjaro,endeavour,omarchy'},
+    {l:'D',i:'🚀',m:'High-end enthusiast rig', s:'32 GB+ RAM, top-tier GPU', v:{perf:2,gaming:1,beauty:1}, sig:['highEndHardware','gaming'], boost:'garuda,nobara,cachyos,popos'}
    ]},
   {id:7, text:"Which desktop style speaks to you?",
    opts:[
-    {l:'A',isDE:true,deKey:'gnome',ico:'gnome',m:'GNOME',s:'Clean, modern, touch-friendly',v:{ease:2,beauty:2},sig:['wantsGnome']},
-    {l:'B',isDE:true,deKey:'kde',ico:'kde',m:'KDE Plasma',s:'Highly customisable, feature-rich',v:{custom:2,beauty:2,perf:1},sig:['wantsKde','wantsCustom']},
-    {l:'C',isDE:true,deKey:'tiling',ico:'tiling',m:'Tiling WM',s:'i3, Hyprland, Sway — keyboard-first',v:{custom:3,cli:2,perf:1},sig:['wantsTiling','liveTerminal','wantsCustom']},
-    {l:'D',isDE:true,deKey:'xfce',ico:'xfce',m:'Lightweight DE',s:'XFCE / LXDE — fast on any HW',v:{light:3,ease:1},sig:['wantsLight','oldHardware']},
+    {l:'A',isDE:true,deKey:'gnome',ico:'gnome',m:'GNOME',s:'Clean, modern, touch-friendly',v:{ease:2,beauty:2},sig:['wantsGnome'], boost:'ubuntu,fedora,popos,elementary'},
+    {l:'B',isDE:true,deKey:'kde',ico:'kde',m:'KDE Plasma',s:'Highly customisable, feature-rich',v:{custom:2,beauty:2,perf:1},sig:['wantsKde','wantsCustom'], boost:'opensuse,manjaro,garuda,cachyos'},
+    {l:'C',isDE:true,deKey:'tiling',ico:'tiling',m:'Tiling WM',s:'i3, Hyprland, Sway — keyboard-first',v:{custom:3,cli:2,perf:1},sig:['wantsTiling','liveTerminal','wantsCustom'], boost:'arch,endeavour,artix,void,gentoo'},
+    {l:'D',isDE:true,deKey:'xfce',ico:'xfce',m:'Lightweight DE',s:'XFCE / LXDE — fast on any HW',v:{light:3,ease:1},sig:['wantsLight','oldHardware'], boost:'mx,peppermint,alpine'}
    ]},
   {id:8,text:"Pick your ideal weekend Linux activity:",
    opts:[
-    {l:'A',i:'🎬',m:'Watch videos, browse the web', s:'Just use it normally', v:{ease:2}, sig:['beginner','dailyUse','wantsEase']},
-    {l:'B',i:'🎮',m:'Game on Steam / Proton', s:'Making games work on Linux', v:{gaming:3,perf:1}, sig:['gaming','intermediate']},
-    {l:'C',i:'🎨',m:'Rice my desktop for hours', s:'Make it look perfect', v:{custom:3,beauty:2}, sig:['advanced','wantsCustom','fearBoring']},
-    {l:'D',i:'🔬',m:'Read docs and configure', s:'Deep-dive into config files', v:{cli:2,custom:2}, sig:['advanced','poweruser','configLot','liveTerminal']},
+    {l:'A',i:'🎬',m:'Watch videos, browse the web', s:'Just use it normally', v:{ease:2}, sig:['beginner','dailyUse','wantsEase'], boost:'ubuntu,mint,zorin,elementary'},
+    {l:'B',i:'🎮',m:'Game on Steam / Proton', s:'Making games work on Linux', v:{gaming:3,perf:1}, sig:['gaming','intermediate'], boost:'popos,garuda,nobara,cachyos'},
+    {l:'C',i:'🎨',m:'Rice my desktop for hours', s:'Make it look perfect', v:{custom:3,beauty:2}, sig:['advanced','wantsCustom','fearBoring'], boost:'arch,endeavour,garuda,artix'},
+    {l:'D',i:'🔬',m:'Read docs and configure', s:'Deep-dive into config files', v:{cli:2,custom:2}, sig:['advanced','poweruser','configLot','liveTerminal'], boost:'arch,gentoo,nixos,void'}
    ]},
   {id:9, text:"How much time will you invest in setup?",
    opts:[
-    {l:'A',i:'⚡',m:'Zero — boot and go', s:'If I configure, I quit', v:{ease:3}, sig:['configNone','wantsEase']},
-    {l:'B',i:'☕',m:'A couple of hours', s:'Basic tweaks and done', v:{ease:1,custom:1}, sig:['configLittle']},
-    {l:'C',i:'🌙',m:'A whole weekend', s:'I want it exactly right', v:{custom:2,cli:1}, sig:['configMore']},
-    {l:'D',i:'∞',m:'As long as it takes', s:'Configuring IS the hobby', v:{custom:3,cli:3}, sig:['configLot','wantsCustom','liveTerminal']},
+    {l:'A',i:'⚡',m:'Zero — boot and go', s:'If I configure, I quit', v:{ease:3}, sig:['configNone','wantsEase'], boost:'ubuntu,mint,zorin,elementary,deepin'},
+    {l:'B',i:'☕',m:'A couple of hours', s:'Basic tweaks and done', v:{ease:1,custom:1}, sig:['configLittle'], boost:'fedora,popos,manjaro,omarchy'},
+    {l:'C',i:'🌙',m:'A whole weekend', s:'I want it exactly right', v:{custom:2,cli:1}, sig:['configMore'], boost:'arch,endeavour,opensuse'},
+    {l:'D',i:'∞',m:'As long as it takes', s:'Configuring IS the hobby', v:{custom:3,cli:3}, sig:['configLot','wantsCustom','liveTerminal'], boost:'gentoo,nixos,void,slackware'}
    ]},
   {id:10,text:"How do you want your system configured out of the box?",
    opts:[
-    {l:'A',i:'✨',m:'Fully pre-configured', s:'Everything works immediately', v:{ease:3,beauty:1}, sig:['beginner','wantsEase','configNone']},
-    {l:'B',i:'🧰',m:'Sensible defaults, tweakable', s:'Some setup, nothing scary', v:{ease:1,custom:1}, sig:['intermediate','configLittle']},
-    {l:'C',i:'🔧',m:'Minimal base, I build up', s:'Start bare, add what I want', v:{custom:2,cli:2}, sig:['advanced','configMore','wantsCustom']},
-    {l:'D',i:'📄',m:'A config file defines it all', s:'Declarative, reproducible', v:{custom:3,cli:3}, sig:['poweruser','configLot','liveTerminal']},
+    {l:'A',i:'✨',m:'Fully pre-configured', s:'Everything works immediately', v:{ease:3,beauty:1}, sig:['beginner','wantsEase','configNone'], boost:'ubuntu,mint,zorin,elementary,deepin'},
+    {l:'B',i:'🧰',m:'Sensible defaults, tweakable', s:'Some setup, nothing scary', v:{ease:1,custom:1}, sig:['intermediate','configLittle'], boost:'fedora,popos,manjaro,nobara,omarchy'},
+    {l:'C',i:'🔧',m:'Minimal base, I build up', s:'Start bare, add what I want', v:{custom:2,cli:2}, sig:['advanced','configMore','wantsCustom'], boost:'arch,endeavour,void,artix'},
+    {l:'D',i:'📄',m:'A config file defines it all', s:'Declarative, reproducible', v:{custom:3,cli:3}, sig:['poweruser','configLot','liveTerminal'], boost:'nixos'}
    ]},
 
   // Part 3: Privacy & Security — Q11-Q15 (indices 10-14)
   {id:11, text:"How important is privacy to you?",
    opts:[
     {l:'A',i:'😐',m:'Not really', s:'I use Google & Windows anyway', v:{ease:1}, sig:['privacyNone']},
-    {l:'B',i:'🔒',m:'Somewhat', s:'I use a VPN sometimes', v:{priv:1}, sig:['privacyLow']},
-    {l:'C',i:'🛡️',m:'Very important', s:'FOSS only, no telemetry', v:{priv:2}, sig:['privacyMed','wantsPrivacy']},
-    {l:'D',i:'👻',m:'Critical — anonymity first', s:'Leave zero trace online', v:{priv:3,cli:1}, sig:['privacyHigh','wantsPrivacy','security']},
+    {l:'B',i:'🔒',m:'Somewhat', s:'I use a VPN sometimes', v:{priv:1}, sig:['privacyLow'], boost:'ubuntu,mint,fedora'},
+    {l:'C',i:'🛡️',m:'Very important', s:'FOSS only, no telemetry', v:{priv:2}, sig:['privacyMed','wantsPrivacy'], boost:'debian,parrot,tails'},
+    {l:'D',i:'👻',m:'Critical — anonymity first', s:'Leave zero trace online', v:{priv:3,cli:1}, sig:['privacyHigh','wantsPrivacy','security'], boost:'tails,qubes,kali'}
    ]},
   {id:12,text:"What's your philosophy on software freedom?",
    opts:[
-    {l:'A',i:'🔓',m:'FOSS only — no proprietary code', s:'I want a fully free system', v:{priv:2,custom:1}, sig:['freedomPurist','privacyMed']},
-    {l:'B',i:'🔄',m:'Open source, but pragmatic', s:'Happy to use NVIDIA drivers, Steam, etc.', v:{ease:1,gaming:1}, sig:['intermediate','pragmatic']},
+    {l:'A',i:'🔓',m:'FOSS only — no proprietary code', s:'I want a fully free system', v:{priv:2,custom:1}, sig:['freedomPurist','privacyMed'], boost:'debian,parrot,tails,qubes'},
+    {l:'B',i:'🔄',m:'Open source, but pragmatic', s:'Happy to use NVIDIA drivers, Steam, etc.', v:{ease:1,gaming:1}, sig:['intermediate','pragmatic'], boost:'ubuntu,fedora,popos,manjaro'},
     {l:'C',i:'💼',m:'I don\'t care as long as it works', s:'Proprietary or open — just get it done', v:{ease:2}, sig:['beginner','privacyNone']},
-    {l:'D',i:'🚫',m:'Avoid blobs, prefer community', s:'Debian main, no non-free', v:{priv:2,custom:2}, sig:['privacyMed','advanced']},
+    {l:'D',i:'🚫',m:'Avoid blobs, prefer community', s:'Debian main, no non-free', v:{priv:2,custom:2}, sig:['privacyMed','advanced'], boost:'debian,arch,void'}
    ]},
   {id:13,text:"How do you approach system security?",
    opts:[
     {l:'A',i:'🔓',m:'I trust the OS defaults', s:'Whatever comes out of the box', v:{ease:1}, sig:['privacyNone']},
-    {l:'B',i:'🛡️',m:'I install a firewall and use basic precautions', s:'UFW, common sense', v:{priv:1,stable:1}, sig:['privacyLow','intermediate']},
-    {l:'C',i:'🔒',m:'I harden my system and disable services', s:'Kernel hardening, apparmor/selinux', v:{priv:2,custom:2,cli:1}, sig:['privacyMed','advanced','wantsPrivacy']},
-    {l:'D',i:'⚛️',m:'I use compartmentalisation (VMs, containers)', s:'Qubes-like or micro‑VMs', v:{priv:3,custom:3,cli:2}, sig:['privacyHigh','security','poweruser','liveTerminal']},
+    {l:'B',i:'🛡️',m:'I install a firewall and use basic precautions', s:'UFW, common sense', v:{priv:1,stable:1}, sig:['privacyLow','intermediate'], boost:'ubuntu,fedora,mint'},
+    {l:'C',i:'🔒',m:'I harden my system and disable services', s:'Kernel hardening, apparmor/selinux', v:{priv:2,custom:2,cli:1}, sig:['privacyMed','advanced','wantsPrivacy'], boost:'debian,parrot,arch'},
+    {l:'D',i:'⚛️',m:'I use compartmentalisation (VMs, containers)', s:'Qubes-like or micro‑VMs', v:{priv:3,custom:3,cli:2}, sig:['privacyHigh','security','poweruser','liveTerminal'], boost:'qubes'}
    ]},
   {id:14,text:"How do you feel about systemd?",
    opts:[
     {l:'A',i:'🤷',m:'What\'s systemd?', s:'I don\'t know or care', v:{ease:2}, sig:['beginner','wantsEase']},
     {l:'B',i:'👍',m:'It works fine for me', s:'Modern init, no complaints', v:{stable:1,ease:1}, sig:['intermediate']},
     {l:'C',i:'🤔',m:'I\'ve heard the debates', s:'Curious about alternatives', v:{custom:1,cli:1}, sig:['advanced','wantsCustom']},
-    {l:'D',i:'🚫',m:'Actively avoid it', s:'runit, OpenRC, or s6 please', v:{custom:3,cli:2,priv:1}, sig:['poweruser','liveTerminal','wantsPrivacy']},
+    {l:'D',i:'🚫',m:'Actively avoid it', s:'runit, OpenRC, or s6 please', v:{custom:3,cli:2,priv:1}, sig:['poweruser','liveTerminal','wantsPrivacy'], exclude:'ubuntu,mint,zorin,elementary,popos,fedora,debian,mx,peppermint,opensuse,manjaro,endeavour,garuda,arch,kali,parrot,tails,qubes,solus,nobara,cachyos,omarchy,deepin', boost:'artix,void,gentoo,alpine,slackware'}
    ]},
   {id:15,text:"How important is corporate backing?",
    opts:[
-    {l:'A',i:'🏢',m:'I want a company behind it', s:'Enterprise support & funding', v:{stable:2,ease:1}, sig:['wantsStable','intermediate']},
+    {l:'A',i:'🏢',m:'I want a company behind it', s:'Enterprise support & funding', v:{stable:2,ease:1}, sig:['wantsStable','intermediate'], boost:'ubuntu,fedora,opensuse'},
     {l:'B',i:'🤷',m:'Doesn\'t matter much', s:'Community or corp, both fine', v:{custom:1}, sig:[]},
-    {l:'C',i:'🌍',m:'Community-driven only', s:'No corporate influence', v:{priv:1,custom:2}, sig:['privacyMed','wantsCustom']},
-    {l:'D',i:'🚫',m:'Actively avoid big tech', s:'Independence is crucial', v:{priv:2,custom:2}, sig:['privacyHigh','wantsPrivacy']},
+    {l:'C',i:'🌍',m:'Community-driven only', s:'No corporate influence', v:{priv:1,custom:2}, sig:['privacyMed','wantsCustom'], boost:'debian,arch,endeavour,mint'},
+    {l:'D',i:'🚫',m:'Actively avoid big tech', s:'Independence is crucial', v:{priv:2,custom:2}, sig:['privacyHigh','wantsPrivacy'], boost:'void,gentoo,artix,alpine'}
    ]},
 
   // Part 4: Custom & CLI — Q16-Q20 (indices 15-19)
   {id:16, text:"How do you feel about the terminal?",
    opts:[
-    {l:'A',i:'😰',m:'Please, no.', s:'GUI all the way, always', v:{ease:2}, sig:['noTerminal']},
-    {l:'B',i:'🤷',m:'I use it when forced', s:'Only when there\'s no other way', v:{ease:1,cli:1}, sig:['someTerminal']},
-    {l:'C',i:'😄',m:'I like it', s:'Comfortable with bash & co.', v:{cli:2,custom:1}, sig:['likeTerminal']},
-    {l:'D',i:'🖤',m:'I live in it', s:'tmux, neovim, zsh — home.', v:{cli:3,custom:2}, sig:['liveTerminal','wantsCustom']},
+    {l:'A',i:'😰',m:'Please, no.', s:'GUI all the way, always', v:{ease:2}, sig:['noTerminal'], boost:'ubuntu,mint,zorin,elementary,deepin'},
+    {l:'B',i:'🤷',m:'I use it when forced', s:'Only when there\'s no other way', v:{ease:1,cli:1}, sig:['someTerminal'], boost:'fedora,popos,manjaro,omarchy'},
+    {l:'C',i:'😄',m:'I like it', s:'Comfortable with bash & co.', v:{cli:2,custom:1}, sig:['likeTerminal'], boost:'arch,endeavour,opensuse'},
+    {l:'D',i:'🖤',m:'I live in it', s:'tmux, neovim, zsh — home.', v:{cli:3,custom:2}, sig:['liveTerminal','wantsCustom'], boost:'arch,gentoo,void,artix'}
    ]},
   {id:17,text:"How do you install software?",
    opts:[
-    {l:'A',i:'🏪',m:'App store / GUI only', s:'Click install, done', v:{ease:3}, sig:['wantsEase','noTerminal','beginner']},
-    {l:'B',i:'📦',m:'Package manager in terminal', s:'apt, dnf, pacman — no problem', v:{cli:2,custom:1}, sig:['someTerminal','likeTerminal','intermediate']},
-    {l:'C',i:'🔨',m:'Compile from source', s:'I read Makefiles for fun', v:{perf:2,custom:3,cli:3}, sig:['poweruser','liveTerminal','wantsCustom']},
-    {l:'D',i:'📦',m:'Flatpak / Snap / AppImage', s:'Universal packages please', v:{ease:2,stable:1}, sig:['beginner','intermediate','wantsEase']},
+    {l:'A',i:'🏪',m:'App store / GUI only', s:'Click install, done', v:{ease:3}, sig:['wantsEase','noTerminal','beginner'], boost:'ubuntu,mint,zorin,elementary'},
+    {l:'B',i:'📦',m:'Package manager in terminal', s:'apt, dnf, pacman — no problem', v:{cli:2,custom:1}, sig:['someTerminal','likeTerminal','intermediate'], boost:'arch,endeavour,manjaro'},
+    {l:'C',i:'🔨',m:'Compile from source', s:'I read Makefiles for fun', v:{perf:2,custom:3,cli:3}, sig:['poweruser','liveTerminal','wantsCustom'], boost:'gentoo'},
+    {l:'D',i:'📦',m:'Flatpak / Snap / AppImage', s:'Universal packages please', v:{ease:2,stable:1}, sig:['beginner','intermediate','wantsEase'], boost:'ubuntu,fedora,popos'}
    ]},
   {id:18,text:"How do you feel about system customisation via config files?",
    opts:[
-    {l:'A',i:'🚫',m:'I never touch configs', s:'GUI settings are enough', v:{ease:2}, sig:['beginner','configNone']},
-    {l:'B',i:'🖱️',m:'I edit some settings with GUI tools', s:'A few tweaks in a settings app', v:{ease:1,custom:1}, sig:['intermediate','configLittle']},
-    {l:'C',i:'📝',m:'I enjoy tweaking config files', s:'vim /etc/... is second nature', v:{cli:2,custom:2}, sig:['advanced','likeTerminal','configMore']},
-    {l:'D',i:'📄',m:'I manage my entire OS declaratively', s:'Nix, Ansible, or dotfiles repos', v:{cli:3,custom:3}, sig:['poweruser','configLot','liveTerminal','wantsCustom']},
+    {l:'A',i:'🚫',m:'I never touch configs', s:'GUI settings are enough', v:{ease:2}, sig:['beginner','configNone'], boost:'ubuntu,mint,zorin,elementary,deepin'},
+    {l:'B',i:'🖱️',m:'I edit some settings with GUI tools', s:'A few tweaks in a settings app', v:{ease:1,custom:1}, sig:['intermediate','configLittle'], boost:'fedora,popos,manjaro,omarchy'},
+    {l:'C',i:'📝',m:'I enjoy tweaking config files', s:'vim /etc/... is second nature', v:{cli:2,custom:2}, sig:['advanced','likeTerminal','configMore'], boost:'arch,endeavour,void,artix'},
+    {l:'D',i:'📄',m:'I manage my entire OS declaratively', s:'Nix, Ansible, or dotfiles repos', v:{cli:3,custom:3}, sig:['poweruser','configLot','liveTerminal','wantsCustom'], boost:'nixos'}
    ]},
   {id:19,text:"How important is out-of-the-box hardware support?",
    opts:[
-    {l:'A',i:'🔌',m:'Essential — everything works immediately', s:'Wi‑Fi, GPU, printers — no tinkering', v:{ease:3}, sig:['wantsEase','beginner']},
-    {l:'B',i:'🔧',m:'I can tweak a few things', s:'Happy to run a script or two', v:{ease:1,custom:1}, sig:['intermediate','configLittle']},
-    {l:'C',i:'📟',m:'I\'m okay with manual driver installs', s:'Terminal doesn\'t scare me', v:{cli:1,custom:2}, sig:['advanced','likeTerminal']},
-    {l:'D',i:'⚙️',m:'I\'ll compile my own kernel', s:'Total control over hardware', v:{custom:3,cli:3,perf:1}, sig:['poweruser','liveTerminal','wantsCustom']},
+    {l:'A',i:'🔌',m:'Essential — everything works immediately', s:'Wi‑Fi, GPU, printers — no tinkering', v:{ease:3}, sig:['wantsEase','beginner'], boost:'ubuntu,mint,zorin,popos'},
+    {l:'B',i:'🔧',m:'I can tweak a few things', s:'Happy to run a script or two', v:{ease:1,custom:1}, sig:['intermediate','configLittle'], boost:'fedora,manjaro,endeavour,omarchy'},
+    {l:'C',i:'📟',m:'I\'m okay with manual driver installs', s:'Terminal doesn\'t scare me', v:{cli:1,custom:2}, sig:['advanced','likeTerminal'], boost:'arch,void,gentoo'},
+    {l:'D',i:'⚙️',m:'I\'ll compile my own kernel', s:'Total control over hardware', v:{custom:3,cli:3,perf:1}, sig:['poweruser','liveTerminal','wantsCustom'], boost:'gentoo,slackware'}
    ]},
   {id:20,text:"How do you feel about reading documentation?",
    opts:[
-    {l:'A',i:'😅',m:'YouTube tutorials only', s:'Videos are easier for me', v:{ease:2}, sig:['beginner','wantsEase']},
-    {l:'B',i:'🌐',m:'Google it when stuck', s:'Forums and Reddit are fine', v:{ease:1,stable:1}, sig:['intermediate']},
+    {l:'A',i:'😅',m:'YouTube tutorials only', s:'Videos are easier for me', v:{ease:2}, sig:['beginner','wantsEase'], boost:'ubuntu,mint,zorin'},
+    {l:'B',i:'🌐',m:'Google it when stuck', s:'Forums and Reddit are fine', v:{ease:1,stable:1}, sig:['intermediate'], boost:'fedora,popos,manjaro,omarchy'},
     {l:'C',i:'🤖',m:'I use AI', s:'ChatGPT / Claude solves it', v:{ease:3,cli:-1}, sig:['beginner','noTerminal'], popup:true},
-    {l:'D',i:'📚',m:'I read the whole wiki', s:'Arch Wiki is my homepage', v:{cli:2,custom:2}, sig:['poweruser','liveTerminal','configLot']},
+    {l:'D',i:'📚',m:'I read the whole wiki', s:'Arch Wiki is my homepage', v:{cli:2,custom:2}, sig:['poweruser','liveTerminal','configLot'], boost:'arch,gentoo,void,artix'}
   ]},
 
   // Part 5: Gaming & Beauty — Q21-Q25 (indices 20-24)
   {id:21, text:"What's your main use case?",
    opts:[
-    {l:'A',i:'🌐',m:'Daily desktop / browsing', s:'Web, media, school, office', v:{ease:2,beauty:1}, sig:['dailyUse','wantsEase']},
-    {l:'B',i:'💼',m:'Dev / work productivity', s:'Code, containers, servers', v:{stable:1,perf:1,cli:1}, sig:['devWork','someTerminal']},
-    {l:'C',i:'🎮',m:'Gaming & high FPS', s:'Steam, Proton, latest GPU', v:{gaming:3,perf:2}, sig:['gaming','wantsPerf']},
-    {l:'D',i:'🔐',m:'Security & privacy', s:'Pentest, anonymity, CTF', v:{priv:3,cli:2}, sig:['security','wantsPrivacy','likeTerminal']},
+    {l:'A',i:'🌐',m:'Daily desktop / browsing', s:'Web, media, school, office', v:{ease:2,beauty:1}, sig:['dailyUse','wantsEase'], boost:'ubuntu,mint,zorin,fedora,elementary'},
+    {l:'B',i:'💼',m:'Dev / work productivity', s:'Code, containers, servers', v:{stable:1,perf:1,cli:1}, sig:['devWork','someTerminal'], boost:'fedora,popos,debian,opensuse'},
+    {l:'C',i:'🎮',m:'Gaming & high FPS', s:'Steam, Proton, latest GPU', v:{gaming:3,perf:2}, sig:['gaming','wantsPerf'], boost:'popos,garuda,nobara,cachyos'},
+    {l:'D',i:'🔐',m:'Security & privacy', s:'Pentest, anonymity, CTF', v:{priv:3,cli:2}, sig:['security','wantsPrivacy','likeTerminal'], boost:'kali,parrot,tails,qubes'}
    ]},
   {id:22,text:"How important is visual polish to you?",
    opts:[
-    {l:'A',i:'🖥️',m:'Function over form', s:'I don\'t care how it looks', v:{ease:1}, sig:['pragmatic']},
-    {l:'B',i:'✨',m:'Nice defaults are appreciated', s:'I like it to look good out of the box', v:{beauty:2,ease:1}, sig:['intermediate','dailyUse']},
-    {l:'C',i:'🎨',m:'I spend hours ricing', s:'Custom themes, icons, everything', v:{beauty:3,custom:2,cli:1}, sig:['advanced','wantsCustom','fearBoring']},
-    {l:'D',i:'💎',m:'Visuals are a dealbreaker', s:'If it\'s ugly, I won\'t use it', v:{beauty:3,ease:1}, sig:['wantsEase','dailyUse']},
+    {l:'A',i:'🖥️',m:'Function over form', s:'I don\'t care how it looks', v:{ease:1}, sig:['pragmatic'], boost:'debian,mx,peppermint,alpine,slackware'},
+    {l:'B',i:'✨',m:'Nice defaults are appreciated', s:'I like it to look good out of the box', v:{beauty:2,ease:1}, sig:['intermediate','dailyUse'], boost:'ubuntu,fedora,zorin,elementary'},
+    {l:'C',i:'🎨',m:'I spend hours ricing', s:'Custom themes, icons, everything', v:{beauty:3,custom:2,cli:1}, sig:['advanced','wantsCustom','fearBoring'], boost:'arch,garuda,endeavour,artix'},
+    {l:'D',i:'💎',m:'Visuals are a dealbreaker', s:'If it\'s ugly, I won\'t use it', v:{beauty:3,ease:1}, sig:['wantsEase','dailyUse'], boost:'deepin,elementary,zorin'}
    ]},
   {id:23,text:"What kind of default apps do you prefer?",
    opts:[
-    {l:'A',i:'📦',m:'Full suite included', s:'Office, browser, media player out of the box', v:{ease:3}, sig:['beginner','wantsEase','configNone']},
-    {l:'B',i:'🎯',m:'Curated essentials', s:'Only the best, pre-selected', v:{ease:2,beauty:1}, sig:['intermediate','dailyUse']},
-    {l:'C',i:'🔧',m:'Minimal — I choose my own', s:'Bare system, install what I need', v:{custom:2,cli:1}, sig:['advanced','configMore','wantsCustom']},
-    {l:'D',i:'☁️',m:'Web apps over native', s:'Browser-based workflow', v:{light:2,ease:2}, sig:['beginner','dailyUse']},
+    {l:'A',i:'📦',m:'Full suite included', s:'Office, browser, media player out of the box', v:{ease:3}, sig:['beginner','wantsEase','configNone'], boost:'ubuntu,mint,zorin'},
+    {l:'B',i:'🎯',m:'Curated essentials', s:'Only the best, pre-selected', v:{ease:2,beauty:1}, sig:['intermediate','dailyUse'], boost:'elementary,popos,fedora,omarchy'},
+    {l:'C',i:'🔧',m:'Minimal — I choose my own', s:'Bare system, install what I need', v:{custom:2,cli:1}, sig:['advanced','configMore','wantsCustom'], boost:'arch,endeavour,void,artix'},
+    {l:'D',i:'☁️',m:'Web apps over native', s:'Browser-based workflow', v:{light:2,ease:2}, sig:['beginner','dailyUse'], boost:'peppermint'}
    ]},
   {id:24,text:"What kind of community and support matters most?",
    opts:[
     {l:'A',i:'🤖',m:'I use AI', s:'ChatGPT fixes everything', v:{ease:3,cli:-1}, sig:['beginner','noTerminal'], popup:true},
     {l:'B',i:'🔍',m:'As long as I find my problem', s:'Any source that works', v:{ease:1,cli:1}, sig:['intermediate']},
-    {l:'C',i:'👥',m:'Active but smaller, expert community', s:'IRC, mailing lists — deep knowledge', v:{custom:2,priv:1}, sig:['advanced','wantsCustom']},
-    {l:'D',i:'🔧',m:'I solve my own problems', s:'Debug without external help', v:{cli:2,custom:2}, sig:['poweruser','liveTerminal']},
+    {l:'C',i:'👥',m:'Active but smaller, expert community', s:'IRC, mailing lists — deep knowledge', v:{custom:2,priv:1}, sig:['advanced','wantsCustom'], boost:'arch,void,artix,gentoo'},
+    {l:'D',i:'🔧',m:'I solve my own problems', s:'Debug without external help', v:{cli:2,custom:2}, sig:['poweruser','liveTerminal'], boost:'arch,gentoo,nixos,void'}
    ]},
   {id:25,text:"What's your long-term plan with Linux?",
    opts:[
     {l:'A',i:'🎯',m:'Find one distro and stay', s:'Settle down, stop distro-hopping', v:{stable:2,ease:1}, sig:['wantsStable','fearBreaking','intermediate']},
-    {l:'B',i:'🌱',m:'Keep learning and evolving', s:'Grow into more advanced distros', v:{custom:2,cli:1}, sig:['advanced','configMore','fearBoring']},
-    {l:'C',i:'🔬',m:'Experiment constantly', s:'Try everything, chase the new', v:{rolling:2,custom:2}, sig:['poweruser','wantsRolling','fearOutdated']},
-    {l:'D',i:'🏠',m:'Build my own eventually', s:'LFS, Gentoo, or custom derivative', v:{custom:3,cli:3}, sig:['poweruser','configLot','liveTerminal']}
+    {l:'B',i:'🌱',m:'Keep learning and evolving', s:'Grow into more advanced distros', v:{custom:2,cli:1}, sig:['advanced','configMore','fearBoring'], boost:'arch,endeavour,manjaro,solus'},
+    {l:'C',i:'🔬',m:'Experiment constantly', s:'Try everything, chase the new', v:{rolling:2,custom:2}, sig:['poweruser','wantsRolling','fearOutdated'], boost:'void,artix,nixos,omarchy'},
+    {l:'D',i:'🏠',m:'Build my own eventually', s:'LFS, Gentoo, or custom derivative', v:{custom:3,cli:3}, sig:['poweruser','configLot','liveTerminal'], boost:'gentoo,slackware'}
    ]}
 ];
 
@@ -1511,8 +1535,53 @@ function getEarnedBadges() {
 const UBUNTU_BASED = ['ubuntu','mint','zorin','elementary','popos'];
 const ADVANCED_DISTROS = ['arch','gentoo','void','nixos','slackware','alpine'];
 
-function computeTopThree(ignoreLightweight, ignoreAllLocks = false) {
-  // ── locks & filters (unchanged) ──────────────────────────────
+// ── Old dimension‑based scoring (for merger) ──────────────────
+function computeDimTopThree(ignoreLightweight, ignoreAllLocks = false) {
+  const secLock = locksEnabled && (!ignoreAllLocks) && (userSignals.includes('security') || userSignals.includes('privacyHigh'));
+  const gamLock = locksEnabled && (!ignoreAllLocks) && userSignals.includes('gaming');
+  const liteLock = locksEnabled && (!ignoreLightweight && !ignoreAllLocks) && userSignals.includes('oldHardware');
+
+  let candidates = Object.keys(DB);
+  const triedAdvanced = triedDistros.some(k => ADVANCED_DISTROS.includes(k) || DB[k].p.ease <= 1);
+  if (triedAdvanced) candidates = candidates.filter(k => !UBUNTU_BASED.includes(k));
+
+  if (secLock) {
+    candidates = candidates.filter(k => ['kali','parrot','tails','qubes'].includes(k));
+    activeMode = 'security';
+  } else if (gamLock) {
+    candidates = candidates.filter(k => DB[k].p.gaming >= 2);
+    activeMode = 'gaming';
+  } else if (liteLock) {
+    candidates = candidates.filter(k => DB[k].p.light >= 3);
+    activeMode = 'lightweight';
+  } else {
+    activeMode = null;
+  }
+  if (!secLock) {
+    candidates = candidates.filter(k => { if (k === 'kali' || k === 'tails') return userDimensions.priv >= 6; return true; });
+  }
+
+  const excludeList = [...triedDistros, ...(window._excludedDistros || [])];
+  let survivors = candidates.filter(k => !excludeList.includes(k));
+  if (survivors.length < 3) survivors = candidates;
+
+  const dims = Object.keys(userDimensions);
+  const uniqueSigs = [...new Set(userSignals)];
+  const scored = survivors.map(key => {
+    const dist = DB[key];
+    let dot = 0;
+    for (const d of dims) dot += (userDimensions[d] || 0) * (dist.p[d] || 0);
+    const sigMatches = (DISTRO_SIGNALS[key] || []).filter(s => uniqueSigs.includes(s)).length;
+    let score = dot + sigMatches * 3;
+    if (triedDistros.includes(key)) score -= 25;
+    return { key, score };
+  });
+  scored.sort((a, b) => b.score - a.score);
+  return scored.slice(0, 3).map(e => e.key);
+}
+
+// ── Current boost engine (renamed) ────────────────────────────
+function computeBoostTopThree(ignoreLightweight, ignoreAllLocks = false) {
   const secLock = locksEnabled && (!ignoreAllLocks) && (userSignals.includes('security') || userSignals.includes('privacyHigh'));
   const gamLock = locksEnabled && (!ignoreAllLocks) && userSignals.includes('gaming');
   const liteLock = locksEnabled && (!ignoreLightweight && !ignoreAllLocks) && userSignals.includes('oldHardware');
@@ -1544,71 +1613,65 @@ function computeTopThree(ignoreLightweight, ignoreAllLocks = false) {
     });
   }
 
-  // ── build user importance weights & target levels (0-10) ──────
-  const dims = ['ease','stable','rolling','perf','priv','custom','cli','gaming','light','beauty'];
-  // approximate max possible per dimension after 25 questions
-  const maxVals = {ease:30, stable:25, rolling:15, perf:20, priv:20, custom:20, cli:20, gaming:10, light:10, beauty:15};
-  const userVec = {};
-  dims.forEach(d => {
-    userVec[d] = Math.min(1, userDimensions[d] / maxVals[d]) * 10; // 0-10
-  });
+  const tally = {};
+  candidates.forEach(k => { tally[k] = 0; });
 
-  // importance from signals (0-1)
-  let imp = {ease:0, stable:0, rolling:0, perf:0, priv:0, custom:0, cli:0, gaming:0, light:0, beauty:0};
-  userSignals.forEach(s => {
-    switch(s) {
-      case 'wantsEase': imp.ease += 0.3; break;
-      case 'beginner': imp.ease += 0.2; break;
-      case 'noTerminal': imp.ease += 0.1; imp.cli = Math.max(0,imp.cli-0.3); break;
-      case 'wantsStable': case 'fearBreaking': imp.stable += 0.3; break;
-      case 'wantsStableRelease': imp.stable += 0.2; break;
-      case 'wantsRolling': imp.rolling += 0.3; break;
-      case 'wantsPerf': imp.perf += 0.3; break;
-      case 'fearOutdated': imp.rolling += 0.1; imp.perf += 0.1; break;
-      case 'gaming': imp.gaming += 0.4; imp.perf += 0.2; break;
-      case 'wantsPrivacy': case 'privacyHigh': imp.priv += 0.4; break;
-      case 'privacyMed': imp.priv += 0.2; break;
-      case 'security': imp.priv += 0.3; imp.priv += 0.2; break;
-      case 'wantsCustom': imp.custom += 0.3; break;
-      case 'likeTerminal': imp.cli += 0.2; break;
-      case 'liveTerminal': imp.cli += 0.4; imp.custom += 0.1; break;
-      case 'configLot': imp.custom += 0.3; break;
-      case 'oldHardware': imp.light += 0.4; break;
-      case 'wantsLight': imp.light += 0.3; break;
-      case 'beauty': imp.beauty += 0.3; break;
-    }
-  });
-  // normalize importance so they sum to number of dimensions
-  const impSum = dims.reduce((s,d)=> s+imp[d], 0) || 1;
-  dims.forEach(d => { imp[d] = imp[d] / impSum * dims.length; });
-  // ensure minimum importance so every dimension counts a bit
-  dims.forEach(d => { if (imp[d] < 0.2) imp[d] = 0.2; });
-
-  // ── scoring ──────────────────────────────────────────────────
-  const excludeList = [...triedDistros, ...(window._excludedDistros || [])];
-  const survivors = candidates.filter(k => !excludeList.includes(k));
-  const finalPool = survivors.length >= 3 ? survivors : candidates;
-
-  const scored = finalPool.map(key => {
-    const dist = DB[key];
-    let sqDist = 0;
-    dims.forEach(d => {
-      const diff = (userVec[d] - dist.p[d] * (10/3)); // scale distro 0-3 -> 0-10
-      sqDist += imp[d] * diff * diff;
+  history.forEach(h => {
+    if (h.skipped || !h.selected) return;
+    const q = QS[h.qIdx];
+    h.selected.forEach(i => {
+      const opt = q.opts[i];
+      if (opt.boost) {
+        opt.boost.split(',').forEach(k => {
+          const key = k.trim();
+          if (tally[key] !== undefined) tally[key] += 10;
+        });
+      }
+      if (opt.penalise || opt.penalize) {
+        (opt.penalise || opt.penalize).split(',').forEach(k => {
+          const key = k.trim();
+          if (tally[key] !== undefined) tally[key] -= 10;
+        });
+      }
+      if (opt.exclude) {
+        opt.exclude.split(',').forEach(k => {
+          const key = k.trim();
+          candidates = candidates.filter(c => c !== key);
+        });
+      }
+      if (opt.sig) userSignals.push(...opt.sig);
+      if (opt.v) {
+        Object.entries(opt.v).forEach(([dim,val]) => {
+          userDimensions[dim] += val;
+        });
+      }
     });
-    const rawScore = 100 - Math.sqrt(sqDist) * 10;
-    const clamped = Math.max(0, Math.min(100, rawScore));
-    // small signal bonus
-    const uniqueSigs = [...new Set(userSignals)];
-    const sigMatches = (DISTRO_SIGNALS[key] || []).filter(s => uniqueSigs.includes(s)).length;
-    let finalScore = clamped + sigMatches * 1.5;
-    if (triedDistros.includes(key)) finalScore -= 25;
-    return { key, score: finalScore };
   });
 
-  scored.sort((a,b) => b.score - a.score);
+  if (likeDone && followUpSelected.length > 0) {
+    followUpSelected.forEach(i => {
+      const opt = LIKE_OPTS[i];
+      if (opt.boost) opt.boost.split(',').forEach(k => { if (tally[k] !== undefined) tally[k] += 8; });
+      if (opt.exclude) opt.exclude.split(',').forEach(k => candidates = candidates.filter(c => c !== k));
+    });
+  }
+  if (dislikeDone && followUpSelected.length > 0) {
+    followUpSelected.forEach(i => {
+      const opt = DISLIKE_OPTS[i];
+      if (opt.penalise || opt.penalize) (opt.penalise || opt.penalize).split(',').forEach(k => { if (tally[k] !== undefined) tally[k] -= 8; });
+      if (opt.exclude) opt.exclude.split(',').forEach(k => candidates = candidates.filter(c => c !== k));
+    });
+  }
+
+  const excludeList = [...triedDistros, ...(window._excludedDistros || [])];
+  let survivors = candidates.filter(k => !excludeList.includes(k));
+  if (survivors.length < 3) survivors = candidates;
+
+  const scored = survivors.map(key => ({ key, score: tally[key] || 0 }));
+  scored.sort((a, b) => b.score - a.score);
   return scored.slice(0, 3).map(e => e.key);
 }
+
 // ═══════════════════════════════════════════════════════════════
 //  SECTION 4: UI Rendering
 // ═══════════════════════════════════════════════════════════════
@@ -2241,6 +2304,7 @@ function showDistroDetailResult(key) {
           <button class="btn-ghost" onclick="goBackToPodium()">${t('backToPodium') || '← Back to podium'}</button>
           <button class="btn-ghost" onclick="beginQuiz()">${t('retake')}</button>
           <button class="btn-ghost" onclick="shareResult('${key}')">📋 Share result</button>
+<button class="btn-ghost" onclick="shareAnswers()">📋 Copy answers</button>
           <button class="btn-ghost" onclick="showStart()">🏠 Home</button>
         </div>
       </div>
@@ -2651,12 +2715,25 @@ function goBackToPodium() {
 
 let forceArchOverride = false;
 
+function mergePodiums(dimTop3, boostTop3) {
+  const scores = {};
+  const allKeys = [...new Set([...dimTop3, ...boostTop3])];
+  allKeys.forEach(k => { scores[k] = 0; });
+  // boost carries slightly more weight because it's explicit
+  dimTop3.forEach(k => { scores[k] += 3; });
+  boostTop3.forEach(k => { scores[k] += 5; });
+  const sorted = Object.entries(scores).sort((a,b) => b[1] - a[1]);
+  return sorted.slice(0, 3).map(e => e[0]);
+}
+
 function finish() {
   if (tweakingAnswers) {
     tweakingAnswers = false;
     ignoreLightweightMode = false;
     lockWasOverridden = false;
-    currentTopThree = computeTopThree(false);
+    const dimTop = computeDimTopThree(false);
+    const boostTop = computeBoostTopThree(false);
+    currentTopThree = mergePodiums(dimTop, boostTop);
     showPickScreen();
     return;
   }
@@ -2666,25 +2743,28 @@ function finish() {
   finishTimer1 = setTimeout(() => {
     swap(`<div class="spin-wrap screen"><div class="spinner" style="border-top-color:var(--violet)"></div><div class="spin-txt">${t('narrowing')}<br><b>${t('almostThere')}</b></div></div>`);
     finishTimer2 = setTimeout(() => {
-      let topThree = computeTopThree(false);
       if (archModeEnabled) {
         forceArchOverride = true;
-        topThree = ['arch','arch','arch'];
+        startReveal(['arch','arch','arch']);
+      } else {
+        const dimTop = computeDimTopThree(false);
+        const boostTop = computeBoostTopThree(false);
+        const finalTopThree = mergePodiums(dimTop, boostTop);
+        startReveal(finalTopThree);
       }
-      startReveal(topThree);
     }, 1400);
   }, 1300);
 }
 
 function recomputeWithoutLightweight() {
   ignoreLightweightMode = true;
-  currentTopThree = computeTopThree(true);
+  currentTopThree = computeBoostTopThree(true);
   activeMode = null;
   showPickScreen();
 }
 
 function recomputeWithoutCurrentLock() {
-  currentTopThree = computeTopThree(false, true);
+  currentTopThree = computeBoostTopThree(false, true);
   activeMode = null;
   lockWasOverridden = true;
   startReveal(currentTopThree);
@@ -2705,7 +2785,7 @@ function tweakAnswers() {
 function recomputeFromPodium() {
   activeMode = null;
   lockWasOverridden = true;
-  currentTopThree = computeTopThree(false, true);
+  currentTopThree = computeBoostTopThree(false, true);
   showPodium(currentTopThree);
 }
 
@@ -2797,6 +2877,25 @@ function afterDislike() { followUpSelected = []; dislikeDone = true; tick(); }
 function skipLike() { followUpSelected = []; likeDone = true; tick(); }
 function skipDislike() { followUpSelected = []; dislikeDone = true; tick(); }
 
+function shareAnswers() {
+  const parts = history.map(h => {
+    if (h.skipped) return null;
+    const q = QS[h.qIdx];
+    const letters = h.selected.map(i => q.opts[i].l).join('');
+    return 'Q' + q.id + letters;
+  }).filter(Boolean);
+  const text = parts.join(';');
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      const toast = document.createElement('div');
+      toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:99999;background:rgba(79,255,176,.15);border:1px solid rgba(79,255,176,.35);color:var(--mint);font-family:var(--mono);font-size:.85rem;padding:10px 24px;border-radius:99px;animation:panelIn .3s ease-out;pointer-events:none';
+      toast.textContent = 'Answers copied!';
+      document.body.appendChild(toast);
+      setTimeout(() => { toast.style.opacity='0'; toast.style.transition='opacity .4s'; setTimeout(()=>toast.remove(),400); }, 2000);
+    }).catch(() => {});
+  }
+}
+
 function shareResult(distroKey) {
   const d = DB[distroKey];
   const text = `I got matched with ${dname(d)} on Find your linux ! 🐧 Find your Linux at ${window.location.href}`;
@@ -2876,7 +2975,10 @@ function shareResult(distroKey) {
 // ═══════════════════════════════════════════════════════════════
 
 function toggleSettings() {
-  document.getElementById('settingsPanel').classList.toggle('open');
+  const panel = document.getElementById('settingsPanel');
+  panel.classList.toggle('open');
+  const gear = document.querySelector('.settings-gear');
+  gear.setAttribute('aria-expanded', panel.classList.contains('open'));
 }
 
 document.addEventListener('click', function(e) {
@@ -2943,7 +3045,7 @@ function toggleLocks(enabled) {
     activeMode = null;
     lockWasOverridden = false;
   }
-  localStorage.setItem('I Love Linux -locks', enabled);
+  localStorage.setItem('ilovelinux-locks', enabled);
 }
 
 let ARCH_QUESTIONS = [];
@@ -3583,7 +3685,7 @@ function t(key) {
 }
 function setLanguage(lang) {
   currentLang = lang;
-  localStorage.setItem('I Love Linux -lang', lang);
+  localStorage.setItem('ilovelinux-lang', lang);          // fixed storage key
   document.getElementById('langSelect').value = lang;
   document.getElementById('progLabel').textContent = t('progress');
   document.getElementById('footerText').textContent = t('footer');
@@ -3594,10 +3696,8 @@ function setLanguage(lang) {
   document.querySelector('.brand h1').textContent = t('tagline');
   document.querySelector('.brand p').textContent = t('subtitle');
   const progWrap = document.getElementById('progWrap');
-  if (!progWrap.style.display || progWrap.style.display === 'none') {
-    document.getElementById('settingsBetaLabel').textContent = t('settingsBeta');
-document.getElementById('settingsLockDesc').textContent = t('settingsLockDesc');
-showStart();
+  if (progWrap && (!progWrap.style.display || progWrap.style.display === 'none')) {
+    showStart();
   } else {
     showNormalQ();
   }
@@ -3611,6 +3711,54 @@ if (savedLang && TRANSLATIONS[savedLang]) {
   currentLang = 'en';
   document.getElementById('langSelect').value = 'en';
 }
+setLanguage(currentLang);   // <-- essential call, now the UI reflects saved language
+
+// ── Cookie consent + Privacy modal (wait for DOM) ──
+document.addEventListener('DOMContentLoaded', function() {
+  const cookieBanner = document.getElementById('cookieBanner');
+  window.acceptCookies = function() {
+    localStorage.setItem('ilovelinux-cookies-accepted', 'true');
+    cookieBanner.classList.add('hidden');
+  };
+  if (localStorage.getItem('ilovelinux-cookies-accepted') === 'true') {
+    cookieBanner.classList.add('hidden');
+  }
+
+  window.openPrivacy = function() {
+    document.getElementById('privacyModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+  window.closePrivacy = function() {
+    document.getElementById('privacyModal').classList.remove('open');
+    document.body.style.overflow = '';
+  };
+  document.getElementById('privacyModal').addEventListener('click', function(e) {
+    if (e.target === this) window.closePrivacy();
+  });
+
+  // ── Global keyboard accessibility ──
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      var settingsPanel = document.getElementById('settingsPanel');
+      if (settingsPanel && settingsPanel.classList.contains('open')) {
+        settingsPanel.classList.remove('open');
+        var gear = document.querySelector('.settings-gear');
+        if (gear) gear.setAttribute('aria-expanded', 'false');
+      }
+      var privacyModal = document.getElementById('privacyModal');
+      if (privacyModal && privacyModal.classList.contains('open')) {
+        window.closePrivacy();
+      }
+    }
+    if (e.key === 'Enter' || e.key === ' ') {
+      var target = e.target;
+      if (target.hasAttribute('onclick') && target.tagName !== 'BUTTON' && target.tagName !== 'A' && target.tagName !== 'INPUT' && target.tagName !== 'SELECT' && target.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        target.click();
+      }
+    }
+  });
+});
 
 // Arch mode always starts off
 
@@ -3661,5 +3809,40 @@ if (savedLang && TRANSLATIONS[savedLang]) {
 
 showStart();
 </script>
+<!-- COOKIE CONSENT BANNER -->
+<script>
+  // hide banner immediately if cookies already accepted (no flash)
+  if (localStorage.getItem('ilovelinux-cookies-accepted') === 'true') {
+    document.write('<style>.cookie-banner{display:none!important}</style>');
+  }
+</script>
+<div class="cookie-banner" id="cookieBanner" role="dialog" aria-labelledby="cookieText" aria-modal="false">
+  <span id="cookieText">This site uses local storage to save your quiz results, badges, and preferences. By clicking "Accept", you consent to this essential functionality. <a href="#" onclick="openPrivacy();return false">Privacy Policy</a></span>
+  <button onclick="acceptCookies()">Accept</button>
+  <button class="secondary" onclick="acceptCookies()">Dismiss</button>
+</div>
+
+<!-- PRIVACY POLICY MODAL -->
+<div class="privacy-modal" id="privacyModal" role="dialog" aria-labelledby="privacyTitle" aria-modal="true">
+  <div class="privacy-modal-inner">
+    <h2 id="privacyTitle">Privacy Policy</h2>
+    <p>Last updated: May 2026</p>
+    <h3>1. Data Collected</h3>
+    <p>This website does <strong>not</strong> collect any personal information. No analytics, no cookies, no tracking. The only data stored is in your browser's local storage:</p>
+    <ul style="margin-left:20px;color:var(--muted)">
+      <li>Quiz results & earned badges</li>
+      <li>Theme and language preferences</li>
+      <li>Easter egg counters</li>
+    </ul>
+    <p>This information never leaves your device and can be deleted by clearing your browser's local storage.</p>
+    <h3>2. External Resources</h3>
+    <p>We load fonts from <strong>Google Fonts</strong> and distro icons from <strong>SimpleIcons CDN</strong>. Their privacy policies apply to those requests. No data is sent from our side.</p>
+    <h3>3. Accessibility</h3>
+    <p>We aim to be accessible to all users. This site follows keyboard‑navigable, screen‑reader‑friendly, and high‑contrast practices. If you encounter issues, please <a href="https://github.com/slyazer/find-your-linux/issues" target="_blank" rel="noopener">file a GitHub issue</a>.</p>
+    <h3>4. Contact</h3>
+    <p>This is a hobby project by <a href="https://github.com/slyazer" target="_blank" rel="noopener">slyazer</a>. No corporate entity, no data processing. For any concerns, open an issue on the repository.</p>
+    <button onclick="closePrivacy()">Close</button>
+  </div>
+</div>
 </body>
 </html>
