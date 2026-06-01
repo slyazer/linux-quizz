@@ -1683,7 +1683,15 @@ const $progNum = () => document.getElementById('progNum');
 function swap(html) {
   const c = $card();
   c.classList.add('fade-out');
-  setTimeout(() => { c.classList.remove('fade-out'); c.innerHTML = html; }, 230);
+  setTimeout(() => {
+    c.classList.remove('fade-out');
+    c.innerHTML = html;
+    // Focus the card so screen readers announce new content
+    c.setAttribute('tabindex', '-1');
+    c.focus({ preventScroll: true });
+    // Scroll to top of card if needed
+    c.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 230);
 }
 
 function buildScoreBreakdown(){
@@ -1756,9 +1764,9 @@ function showStart() {
       <div class="strip">${stripHTML}</div>
       <button class="btn-next" onclick="beginQuiz()">${t('start')} <span class="arr">→</span></button>
       <div style="margin-top:16px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
-        <span class="btn-skip" onclick="showDistroBrowser()" style="cursor:pointer">${t('browse')}</span>
-        <span class="btn-skip" onclick="randomDistro()" style="cursor:pointer">🎲 ${t('randomDistro') || 'Random distro'}</span>
-        <span class="btn-skip" onclick="showBadgeWall()" style="cursor:pointer">🏅 Badges (${getEarnedBadges().length}/28)</span>
+        <span class="btn-skip" onclick="showDistroBrowser()" style="cursor:pointer" tabindex="0" role="button">${t('browse')}</span>
+        <span class="btn-skip" onclick="randomDistro()" style="cursor:pointer" tabindex="0" role="button">🎲 ${t('randomDistro') || 'Random distro'}</span>
+        <span class="btn-skip" onclick="showBadgeWall()" style="cursor:pointer" tabindex="0" role="button">🏅 Badges (${getEarnedBadges().length}/28)</span>
       </div>
     </div>`;
 }
@@ -1809,7 +1817,7 @@ function showDistroDetail(key) {
   const tagsHTML = dtags(d).map(t => `<span class="detail-tag">${t}</span>`).join('');
   $card().innerHTML = `
     <div class="screen distro-detail">
-      <span class="back-link" onclick="showStart()">${t('backToAll')}</span>
+      <span class="back-link" onclick="showStart()" tabindex="0" role="button">${t('backToAll')}</span>
       <img class="detail-logo" src="${d.logo}" alt="${dname(d)}" onerror="this.style.display='none'">
       <h2 class="detail-name">${dname(d)}</h2>
       <p class="detail-line">${dline(d)}</p>
@@ -2064,12 +2072,12 @@ function finishTierList() {
     }
   });
   
-  // Keep bangers in tried list with -25 penalty but exclude from results
+  // Keep bangers in tried list but DON'T exclude them from results
   _tierBangers.forEach(k => {
     if (!triedDistros.includes(k)) triedDistros.push(k);
   });
-  // Store excluded keys for computeTopThree
-  window._excludedDistros = [..._tierBangers, ..._tierTrash];
+  // Only trash is excluded — bangers stay in the candidate pool
+  window._excludedDistros = [..._tierTrash];
   
   likeDone = true;
   dislikeDone = true;
@@ -2758,13 +2766,18 @@ function finish() {
 
 function recomputeWithoutLightweight() {
   ignoreLightweightMode = true;
-  currentTopThree = computeBoostTopThree(true);
+  const dimTop = computeDimTopThree(true);
+  const boostTop = computeBoostTopThree(true);
+  currentTopThree = mergePodiums(dimTop, boostTop);
   activeMode = null;
   showPickScreen();
 }
 
 function recomputeWithoutCurrentLock() {
-  currentTopThree = computeBoostTopThree(false, true);
+  window._excludedDistros = [];
+  const dimTop = computeDimTopThree(false, true);
+  const boostTop = computeBoostTopThree(false, true);
+  currentTopThree = mergePodiums(dimTop, boostTop);
   activeMode = null;
   lockWasOverridden = true;
   startReveal(currentTopThree);
@@ -2783,9 +2796,12 @@ function tweakAnswers() {
 }
 
 function recomputeFromPodium() {
+  window._excludedDistros = [];
   activeMode = null;
   lockWasOverridden = true;
-  currentTopThree = computeBoostTopThree(false, true);
+  const dimTop = computeDimTopThree(false, true);
+  const boostTop = computeBoostTopThree(false, true);
+  currentTopThree = mergePodiums(dimTop, boostTop);
   showPodium(currentTopThree);
 }
 
