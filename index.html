@@ -2320,12 +2320,12 @@ function showDistroDetailResult(key) {
       <div class="cta" style="flex-direction:column;align-items:center;gap:12px">
         <a href="${winner.url}" target="_blank" rel="noopener" class="btn-site">🌐 ${t('visit')} ${dname(winner)}</a>
         ${DISTROSEA_KEYS[key] ? `<a href="https://distrosea.com/select/${DISTROSEA_KEYS[key]}/" target="_blank" rel="noopener" class="btn-site" style="background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid rgba(79,255,176,.35);color:var(--mint);box-shadow:0 4px 22px rgba(79,255,176,.15)">🖥️ ${t('tryOnline') || 'Try'} ${dname(winner)} ${t('online') || 'Online'}</a>` : ''}
-        <div style="display:flex;gap:11px">
-          <button class="btn-ghost" onclick="goBackToPodium()">${t('backToPodium') || '← Back to podium'}</button>
-          <button class="btn-ghost" onclick="beginQuiz()">${t('retake')}</button>
-          <button class="btn-ghost" onclick="shareResult('${key}')">📋 Share result</button>
-<button class="btn-ghost" onclick="shareAnswers()">📋 Copy answers</button>
-          <button class="btn-ghost" onclick="showStart()">🏠 Home</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+          <button class="btn-ghost" style="font-size:.76rem;padding:10px 14px;white-space:nowrap" onclick="goBackToPodium()">${t('backToPodium') || '← Back to podium'}</button>
+          <button class="btn-ghost" style="font-size:.76rem;padding:10px 14px;white-space:nowrap" onclick="beginQuiz()">${t('retake')}</button>
+          <button class="btn-ghost" style="font-size:.76rem;padding:10px 14px;white-space:nowrap" onclick="shareResult('${key}')">📋 Share result</button>
+          <button class="btn-ghost" style="font-size:.76rem;padding:10px 14px;white-space:nowrap" onclick="shareAnswers()">📋 Copy answers</button>
+          <button class="btn-ghost" style="font-size:.76rem;padding:10px 14px;white-space:nowrap" onclick="showStart()">🏠 Home</button>
         </div>
       </div>
     </div>`);
