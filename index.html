@@ -2177,6 +2177,12 @@ function showPickScreen() {
     </div>
     <div class="pick-grid">${cardsHTML}</div>
     ${breakdown}
+    ${(_tierBangers.length > 0 || _tierTrash.length > 0) ? `
+    <div style="margin-top:16px;text-align:left;font-family:var(--mono);font-size:.65rem;color:var(--muted)">
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">📋 Your Tier List</div>
+      ${_tierBangers.length > 0 ? `<div style="color:var(--mint);margin-bottom:3px">🔥 Bangers: ${_tierBangers.map(k => dname(DB[k])).join(', ')}</div>` : ''}
+      ${_tierTrash.length > 0 ? `<div style="color:var(--coral);margin-bottom:3px">🗑️ Trash: ${_tierTrash.map(k => dname(DB[k])).join(', ')}</div>` : ''}
+    </div>` : ''}
     <div class="cta">
       <button class="btn-ghost" onclick="tweakAnswers()">${t('tweakAnswers') || 'Tweak answers'}</button>
       <button class="btn-ghost" onclick="beginQuiz()">${t('retake')}</button>
@@ -2305,6 +2311,12 @@ function showDistroDetailResult(key) {
       ${mismatchHTML}
       ${triedBoxesHTML}
       ${runnerKeys.length > 0 ? `<div class="runners-label">${t('otherPicks')}</div><div class="runners">${runnersHTML}</div>` : ''}
+      ${(_tierBangers.length > 0 || _tierTrash.length > 0) ? `
+      <div style="margin-top:8px;text-align:center;font-family:var(--mono);font-size:.65rem;color:var(--muted)">
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">📋 Your Tier List</div>
+        ${_tierBangers.length > 0 ? `<div style="color:var(--mint);margin-bottom:2px">🔥 Bangers: ${_tierBangers.map(k => dname(DB[k])).join(', ')}</div>` : ''}
+        ${_tierTrash.length > 0 ? `<div style="color:var(--coral);margin-bottom:2px">🗑️ Trash: ${_tierTrash.map(k => dname(DB[k])).join(', ')}</div>` : ''}
+      </div>` : ''}
       <div class="cta" style="flex-direction:column;align-items:center;gap:12px">
         <a href="${winner.url}" target="_blank" rel="noopener" class="btn-site">🌐 ${t('visit')} ${dname(winner)}</a>
         ${DISTROSEA_KEYS[key] ? `<a href="https://distrosea.com/select/${DISTROSEA_KEYS[key]}/" target="_blank" rel="noopener" class="btn-site" style="background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid rgba(79,255,176,.35);color:var(--mint);box-shadow:0 4px 22px rgba(79,255,176,.15)">🖥️ ${t('tryOnline') || 'Try'} ${dname(winner)} ${t('online') || 'Online'}</a>` : ''}
@@ -2636,8 +2648,21 @@ function showPodium(topThree) {
       </table>
     </div>`;
 
+  // Tier list summary (if user ranked anything)
+  let tierSummaryHTML = '';
+  if (_tierBangers.length > 0 || _tierTrash.length > 0) {
+    const bangerNames = _tierBangers.map(k => dname(DB[k])).join(', ');
+    const trashNames = _tierTrash.map(k => dname(DB[k])).join(', ');
+    tierSummaryHTML = `
+      <div style="margin-top:20px;text-align:left">
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">📋 Your Tier List</div>
+        ${_tierBangers.length > 0 ? `<div style="font-family:var(--mono);font-size:.65rem;color:var(--mint);margin-bottom:4px">🔥 Bangers: ${bangerNames}</div>` : ''}
+        ${_tierTrash.length > 0 ? `<div style="font-family:var(--mono);font-size:.65rem;color:var(--coral);margin-bottom:4px">🗑️ Trash: ${trashNames}</div>` : ''}
+      </div>`;
+  }
+
   const breakdownDiv = document.getElementById('revBreakdown');
-  breakdownDiv.innerHTML = breakdownHTML + comparisonHTML;
+  breakdownDiv.innerHTML = breakdownHTML + comparisonHTML + tierSummaryHTML;
 
   launchConfetti();
   setTimeout(() => {
@@ -2900,12 +2925,18 @@ function shareAnswers() {
     const letters = h.selected.map(i => q.opts[i].l).join('');
     return 'Q' + q.id + letters;
   }).filter(Boolean);
-  const text = parts.join(';');
+  let text = parts.join(';');
+  // Add tier list if user ranked anything
+  if (_tierBangers.length > 0 || _tierTrash.length > 0) {
+    const bangers = _tierBangers.length > 0 ? '🔥Bangers:' + _tierBangers.join(',') : '';
+    const trash = _tierTrash.length > 0 ? '🗑️Trash:' + _tierTrash.join(',') : '';
+    text += ' | ' + [bangers, trash].filter(Boolean).join(' ');
+  }
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => {
       const toast = document.createElement('div');
       toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:99999;background:rgba(79,255,176,.15);border:1px solid rgba(79,255,176,.35);color:var(--mint);font-family:var(--mono);font-size:.85rem;padding:10px 24px;border-radius:99px;animation:panelIn .3s ease-out;pointer-events:none';
-      toast.textContent = 'Answers copied!';
+      toast.textContent = 'Answers + tier list copied!';
       document.body.appendChild(toast);
       setTimeout(() => { toast.style.opacity='0'; toast.style.transition='opacity .4s'; setTimeout(()=>toast.remove(),400); }, 2000);
     }).catch(() => {});
