@@ -2120,35 +2120,7 @@ function showFollowUp(type) {
   </div>`);
 }
 
-function showUbuntuVariants() {
-  const ubuntuVariants = [
-    {name:'Ubuntu',         desc:'The standard GNOME experience', url:'https://ubuntu.com'},
-    {name:'Kubuntu',        desc:'Ubuntu with KDE Plasma desktop', url:'https://kubuntu.org'},
-    {name:'Lubuntu',        desc:'Lightweight LXQt desktop', url:'https://lubuntu.me'},
-    {name:'Xubuntu',        desc:'Elegant XFCE desktop', url:'https://xubuntu.org'},
-    {name:'Ubuntu Budgie',  desc:'Modern Budgie desktop', url:'https://ubuntubudgie.org'},
-    {name:'Ubuntu MATE',    desc:'Classic MATE desktop', url:'https://ubuntu-mate.org'},
-  ];
-  const cardsHTML = ubuntuVariants.map(v => `
-    <button class="pick-card" onclick="window._ubuntuVariantChosen=true;openUbuntuVariant('${v.url}')">
-      <span class="pick-name">${v.name}</span>
-      <span class="pick-line" style="font-size:.65rem">${v.desc}</span>
-    </button>`).join('');
-  swap(`<div class="screen">
-    <div class="res-badge">${t('ubuntuVariants')}</div>
-    <div class="pick-title"><h3>${t('chooseFlavour')}</h3><p class="pick-subtitle">${t('flavourSubtitle')}</p></div>
-    <div class="pick-grid">${cardsHTML}</div>
-    <div class="cta">
-      <button class="btn-ghost" onclick="window._ubuntuVariantChosen=true;showDistroDetailResult('ubuntu')">${t('skipShowStandard')}</button>
-      <button class="btn-ghost" onclick="showPickScreen()">${t('backToChoices')}</button>
-    </div>
-  </div>`);
-}
 
-function openUbuntuVariant(url) {
-  window._ubuntuVariantChosen = true;
-  showDistroDetailResult('ubuntu');
-}
 
 function showPickScreen() {
   document.getElementById('brand').style.display = 'none';
@@ -2192,11 +2164,6 @@ function showPickScreen() {
 }
 
 function showDistroDetailResult(key) {
-  if (key === 'ubuntu' && !window._ubuntuVariantChosen) {
-    showUbuntuVariants();
-    return;
-  }
-  window._ubuntuVariantChosen = false;
   const winner = DB[key];
   const isArchMode = window._archModeActive;
   const runnerKeys = currentTopThree.filter(k => k !== key);
