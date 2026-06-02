@@ -2127,7 +2127,13 @@ function showPickScreen() {
   document.getElementById('brand').style.display = 'none';
   document.getElementById('progWrap').style.display = 'none';
 
-  const cardsHTML = currentTopThree.map((key, i) => {
+  const excludeDisplay = [...triedDistros, ...(_tierBangers || []), ...(_tierTrash || [])];
+  const displayTopThree = currentTopThree.filter(k => !excludeDisplay.includes(k)).slice(0, 3);
+  if (displayTopThree.length === 0) {
+    // If all top 3 are excluded, fall back to showing them anyway
+    displayTopThree.push(...currentTopThree.slice(0, 3));
+  }
+  const cardsHTML = displayTopThree.map((key, i) => {
     const d = DB[key];
     const badge = i === 0 ? t('bestMatch') : i === 1 ? t('runnerUp') : t('alsoGreat');
     return `
@@ -2167,7 +2173,9 @@ function showPickScreen() {
 function showDistroDetailResult(key) {
   const winner = DB[key];
   const isArchMode = window._archModeActive;
-  const runnerKeys = currentTopThree.filter(k => k !== key);
+  const excludeDisplay = [...triedDistros, ...(_tierBangers || []), ...(_tierTrash || [])];
+  const displayTopThree = currentTopThree.filter(k => !excludeDisplay.includes(k));
+  const runnerKeys = displayTopThree.filter(k => k !== key);
   const mismatch = getMismatch(key, userDEKey);
 
   let modeNote = '';
@@ -2557,10 +2565,17 @@ function showPodium(topThree) {
   const badges = [t('bestMatch'), t('runnerUp'), t('alsoGreat')];
   // Pedestal heights in px
   const pedH = [120, 80, 50]; // 1st=120, 2nd=80, 3rd=50
+  const excludeDisplay = [...triedDistros, ...(_tierBangers || []), ...(_tierTrash || [])];
+  let displayTopThree = topThree.filter(k => !excludeDisplay.includes(k));
+  if (displayTopThree.length < 3) {
+    // Fill remaining slots from original topThree that aren't already included
+    const fillers = topThree.filter(k => !displayTopThree.includes(k));
+    displayTopThree = [...displayTopThree, ...fillers].slice(0, 3);
+  }
   const cardData = [
-    { key: topThree[1], badge: badges[1], logoH: 75, delay: 200, yOff: 50, pedH: pedH[1], tagFont: '.7rem', nameFont: '1rem' },
-    { key: topThree[0], badge: badges[0], logoH: 100, delay: 0, yOff: 20, pedH: pedH[0], tagFont: '.9rem', nameFont: '1.5rem' },
-    { key: topThree[2], badge: badges[2], logoH: 60, delay: 400, yOff: 70, pedH: pedH[2], tagFont: '.6rem', nameFont: '.85rem' },
+    { key: displayTopThree[1], badge: badges[1], logoH: 75, delay: 200, yOff: 50, pedH: pedH[1], tagFont: '.7rem', nameFont: '1rem' },
+    { key: displayTopThree[0], badge: badges[0], logoH: 100, delay: 0, yOff: 20, pedH: pedH[0], tagFont: '.9rem', nameFont: '1.5rem' },
+    { key: displayTopThree[2], badge: badges[2], logoH: 60, delay: 400, yOff: 70, pedH: pedH[2], tagFont: '.6rem', nameFont: '.85rem' },
   ];
 
   const cardsHTML = cardData.map(cd => {
@@ -2623,9 +2638,9 @@ function showPodium(topThree) {
     const trashNames = _tierTrash.map(k => dname(DB[k])).join(', ');
     tierSummaryHTML = `
       <div style="margin-top:20px;text-align:left">
-        <div style="font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">📋 Your Tier List</div>
-        ${_tierBangers.length > 0 ? `<div style="font-family:var(--mono);font-size:.65rem;color:var(--mint);margin-bottom:4px">🔥 Bangers: ${bangerNames}</div>` : ''}
-        ${_tierTrash.length > 0 ? `<div style="font-family:var(--mono);font-size:.65rem;color:var(--coral);margin-bottom:4px">🗑️ Trash: ${trashNames}</div>` : ''}
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">${t('tierListLabel') || '📋 Your Tier List'}</div>
+        ${_tierBangers.length > 0 ? `<div style="font-family:var(--mono);font-size:.65rem;color:var(--mint);margin-bottom:4px">${t('bangersLabel') || '🔥 Bangers'}: ${bangerNames}</div>` : ''}
+        ${_tierTrash.length > 0 ? `<div style="font-family:var(--mono);font-size:.65rem;color:var(--coral);margin-bottom:4px">${t('trashLabel') || '🗑️ Trash'}: ${trashNames}</div>` : ''}
       </div>`;
   }
 
@@ -2904,7 +2919,7 @@ function shareAnswers() {
     navigator.clipboard.writeText(text).then(() => {
       const toast = document.createElement('div');
       toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:99999;background:rgba(79,255,176,.15);border:1px solid rgba(79,255,176,.35);color:var(--mint);font-family:var(--mono);font-size:.85rem;padding:10px 24px;border-radius:99px;animation:panelIn .3s ease-out;pointer-events:none';
-      toast.textContent = 'Answers + tier list copied!';
+      toast.textContent = t('answersAndTierCopied') || 'Answers + tier list copied!';
       document.body.appendChild(toast);
       setTimeout(() => { toast.style.opacity='0'; toast.style.transition='opacity .4s'; setTimeout(()=>toast.remove(),400); }, 2000);
     }).catch(() => {});
@@ -3684,7 +3699,13 @@ const TRANSLATIONS = {
     q25_optCm: 'Expérimenter constamment',
     q25_optCs: 'Tout essayer, chercher la nouveauté',
     q25_optDm: 'Construire la mienne un jour',
-    q25_optDs: 'LFS, Gentoo, ou dérivé personnalisé'
+    q25_optDs: 'LFS, Gentoo, ou dérivé personnalisé',
+    copyAnswers: '📋 Copier les réponses',
+    answersCopied: 'Réponses copiées !',
+    answersAndTierCopied: 'Réponses + tier list copiées !',
+    tierListLabel: '📋 Ton Tier List',
+    bangersLabel: '🔥 Bangers',
+    trashLabel: '🗑️ Trash'
   }
 };
 
@@ -3700,7 +3721,7 @@ function t(key) {
 }
 function setLanguage(lang) {
   currentLang = lang;
-  localStorage.setItem('ilovelinux-lang', lang);          // fixed storage key
+  localStorage.setItem('ilovelinux-lang', lang);
   document.getElementById('langSelect').value = lang;
   document.getElementById('progLabel').textContent = t('progress');
   document.getElementById('footerText').textContent = t('footer');
@@ -3708,42 +3729,12 @@ function setLanguage(lang) {
   document.getElementById('lockToggleLabel').textContent = 'Profile Locks';
   const lockDesc = document.querySelector('#settingsPanel p');
   if (lockDesc) lockDesc.textContent = t('settingsLockDesc');
-  document.querySelector('.brand h1').textContent = t('tagline');
-  document.querySelector('.brand p').textContent = t('subtitle');
   const progWrap = document.getElementById('progWrap');
-  if (progWrap && (!progWrap.style.display || progWrap.style.display === 'none')) {
-    showStart();
-  } else {
-    showNormalQ();function showUbuntuVariants() {
-  const ubuntuVariants = [
-    {name:'Ubuntu',         desc:'The standard GNOME experience', url:'https://ubuntu.com'},
-    {name:'Kubuntu',        desc:'Ubuntu with KDE Plasma desktop', url:'https://kubuntu.org'},
-    {name:'Lubuntu',        desc:'Lightweight LXQt desktop', url:'https://lubuntu.me'},
-    {name:'Xubuntu',        desc:'Elegant XFCE desktop', url:'https://xubuntu.org'},
-    {name:'Ubuntu Budgie',  desc:'Modern Budgie desktop', url:'https://ubuntubudgie.org'},
-    {name:'Ubuntu MATE',    desc:'Classic MATE desktop', url:'https://ubuntu-mate.org'},
-  ];
-  const cardsHTML = ubuntuVariants.map(v => `
-    <button class="pick-card" onclick="window._ubuntuVariantChosen=true;openUbuntuVariant('${v.url}')">
-      <span class="pick-name">${v.name}</span>
-      <span class="pick-line" style="font-size:.65rem">${v.desc}</span>
-    </button>`).join('');
-  swap(`<div class="screen">
-    <div class="res-badge">${t('ubuntuVariants')}</div>
-    <div class="pick-title"><h3>${t('chooseFlavour')}</h3><p class="pick-subtitle">${t('flavourSubtitle')}</p></div>
-    <div class="pick-grid">${cardsHTML}</div>
-    <div class="cta">
-      <button class="btn-ghost" onclick="window._ubuntuVariantChosen=true;showDistroDetailResult('ubuntu')">${t('skipShowStandard')}</button>
-      <button class="btn-ghost" onclick="showPickScreen()">${t('backToChoices')}</button>
-    </div>
-  </div>`);
-}
-
-function openUbuntuVariant(url) {
-  window._ubuntuVariantChosen = true;
-  showDistroDetailResult('ubuntu');
-}
+  if (progWrap && progWrap.style.display !== 'none') {
+    // Mid-quiz: just re-render the current question with new language
+    showNormalQ();
   }
+  // If progWrap is hidden, user is on start screen — do nothing
 }
 
 const savedLang = localStorage.getItem('ilovelinux-lang');
