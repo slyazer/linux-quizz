@@ -1269,8 +1269,8 @@ const QS = [
    opts:[
     {l:'A',i:'🤷',m:'What\'s systemd?', s:'I don\'t know or care', v:{ease:2}, sig:['beginner','wantsEase']},
     {l:'B',i:'👍',m:'It works fine for me', s:'Modern init, no complaints', v:{stable:1,ease:1}, sig:['intermediate']},
-    {l:'C',i:'🤔',m:'I\'ve heard the debates', s:'Curious about alternatives', v:{custom:1,cli:1}, sig:['advanced','wantsCustom']},
-    {l:'D',i:'🚫',m:'Actively avoid it', s:'runit, OpenRC, or s6 please', v:{custom:3,cli:2,priv:1}, sig:['poweruser','liveTerminal','wantsPrivacy'], exclude:'ubuntu,mint,zorin,elementary,popos,fedora,debian,mx,peppermint,opensuse,manjaro,endeavour,garuda,arch,kali,parrot,tails,qubes,solus,nobara,cachyos,omarchy,deepin', boost:'artix,void,gentoo,alpine,slackware'}
+    {l:'C',i:'🤔',m:'I\'ve heard the debates', s:'Curious about alternatives', v:{custom:2,cli:1,priv:1}, sig:['advanced','wantsCustom','privacyMed'], boost:'artix,void,gentoo,alpine,slackware,debian,arch'},
+    {l:'D',i:'🚫',m:'Actively avoid it', s:'runit, OpenRC, or s6 please', v:{custom:3,cli:2,priv:2}, sig:['poweruser','liveTerminal','wantsPrivacy'], exclude:'ubuntu,mint,zorin,elementary,popos,fedora,debian,mx,peppermint,opensuse,manjaro,endeavour,garuda,arch,kali,parrot,tails,qubes,solus,nobara,cachyos,omarchy,deepin', boost:'artix,void,gentoo,alpine,slackware'}
    ]},
   {id:15,text:"How important is corporate backing?",
    opts:[
@@ -1498,7 +1498,7 @@ const BADGES = [
   { id:'ubuntu-universe', icon:'🟠', name:'Ubuntu Universe', desc:'Matched with any Ubuntu flavor', check:()=> currentTopThree.includes('ubuntu') },
   { id:'gentoo-grinder', icon:'⚙️', name:'Gentoo Grinder', desc:'Matched with Gentoo', check:()=> currentTopThree.includes('gentoo') },
   { id:'the-one-percent', icon:'💎', name:'The 1%', desc:'Matched with Alpine, Slackware, or Clear', check:()=> currentTopThree.some(k=>['alpine','slackware','clear'].includes(k)) },
-  { id:'linux-detective', icon:'🕵️', name:'Linux Detective', desc:'Triggered the easter egg 3+ times', check:()=> (parseInt(localStorage.getItem('I Love Linux -easteregg-count')||'0')) >= 3 },
+  { id:'linux-detective', icon:'🕵️', name:'Linux Detective', desc:'Triggered the easter egg 3+ times', check:()=> (parseInt(localStorage.getItem('ilovelinux-easteregg-count')||'0')) >= 3 },
   { id:'ai-abuser', icon:'🤖', name:'AI Abuser', desc:'Selected I use AI on both Q20 and Q24', check:()=> { let hasAI20 = false, hasAI24 = false; history.forEach(h => { if(!h.skipped && h.selected) { const q = QS[h.qIdx]; if(q.id===20) h.selected.forEach(i => { if(q.opts[i].l==='C') hasAI20 = true; }); if(q.id===24) h.selected.forEach(i => { if(q.opts[i].l==='A') hasAI24 = true; }); } }); return hasAI20 && hasAI24; } },
   { id:'loyalist', icon:'💚', name:'Loyalist', desc:'Took the quiz 5+ times', check:()=> (parseInt(localStorage.getItem('ilovelinux-quiz-count')||'0')) >= 5 },
   { id:'indecisive', icon:'🤔', name:'Indecisive', desc:'Used Previous button 10+ times in one quiz', check:()=> (window._backCount || 0) >= 10 },
@@ -2368,7 +2368,7 @@ function triggerJumpscare(name) {
       overlay.style.opacity = '0';
       overlay.style.transition = 'opacity .4s';
       setTimeout(() => { overlay.remove(); style.remove(); jumpscareActive = false; }, 400);
-    }, 1800);
+    }, 500);
   }
 }
 
