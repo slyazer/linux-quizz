@@ -1499,7 +1499,7 @@ const BADGES = [
   { id:'gentoo-grinder', icon:'⚙️', name:'Gentoo Grinder', desc:'Matched with Gentoo', check:()=> currentTopThree.includes('gentoo') },
   { id:'the-one-percent', icon:'💎', name:'The 1%', desc:'Matched with Alpine, Slackware, or Clear', check:()=> currentTopThree.some(k=>['alpine','slackware','clear'].includes(k)) },
   { id:'linux-detective', icon:'🕵️', name:'Linux Detective', desc:'Triggered the easter egg 3+ times', check:()=> (parseInt(localStorage.getItem('ilovelinux-easteregg-count')||'0')) >= 3 },
-  { id:'ai-abuser', icon:'🤖', name:'AI Abuser', desc:'Selected I use AI on both Q20 and Q24', check:()=> { let hasAI20 = false, hasAI24 = false; history.forEach(h => { if(!h.skipped && h.selected) { const q = QS[h.qIdx]; if(q.id===20) h.selected.forEach(i => { if(q.opts[i].l==='C') hasAI20 = true; }); if(q.id===24) h.selected.forEach(i => { if(q.opts[i].l==='A') hasAI24 = true; }); } }); return hasAI20 && hasAI24; } },
+  { id:'ai-abuser', icon:'🤖', name:'AI Abuser', desc:'Selected I use AI on both Q20 and Q24', check:()=> { let hasAI20 = false, hasAI24 = false; history.forEach(h => { if(!h.skipped && h.selected) { const source = (archModeEnabled && Array.isArray(ARCH_QUESTIONS) && ARCH_QUESTIONS.length > 0) ? ARCH_QUESTIONS : (Array.isArray(QS) && QS.length > 0) ? QS : []; const q = source[h.qIdx]; if (q && q.id===20) h.selected.forEach(i => { if(q.opts[i].l==='C') hasAI20 = true; }); if (q && q.id===24) h.selected.forEach(i => { if(q.opts[i].l==='A') hasAI24 = true; }); } }); return hasAI20 && hasAI24; } },
   { id:'loyalist', icon:'💚', name:'Loyalist', desc:'Took the quiz 5+ times', check:()=> (parseInt(localStorage.getItem('ilovelinux-quiz-count')||'0')) >= 5 },
   { id:'indecisive', icon:'🤔', name:'Indecisive', desc:'Used Previous button 10+ times in one quiz', check:()=> (window._backCount || 0) >= 10 },
 ];
@@ -1616,11 +1616,12 @@ function computeBoostTopThree(ignoreLightweight, ignoreAllLocks = false) {
   const tally = {};
   candidates.forEach(k => { tally[k] = 0; });
 
-  history.forEach(h => {
-    if (h.skipped || !h.selected) return;
-    const q = QS[h.qIdx];
-    h.selected.forEach(i => {
-      const opt = q.opts[i];
+   history.forEach(h => {
+      if (h.skipped || !h.selected) return;
+      const source = (archModeEnabled && Array.isArray(ARCH_QUESTIONS) && ARCH_QUESTIONS.length > 0) ? ARCH_QUESTIONS : (Array.isArray(QS) && QS.length > 0) ? QS : [];
+      const q = (source && source[h.qIdx]) || {};
+     h.selected.forEach(i => {
+       const opt = q.opts[i];
       if (opt.boost) {
         opt.boost.split(',').forEach(k => {
           const key = k.trim();
@@ -1726,7 +1727,7 @@ function formatTime(ms){
 
 function updateProgress() {
   document.getElementById('progLabel').textContent = t('progress');
-  const total = archModeEnabled ? ARCH_QUESTIONS.length : QS.length;
+  const total = (archModeEnabled && Array.isArray(ARCH_QUESTIONS)) ? ARCH_QUESTIONS.length : (Array.isArray(QS)) ? QS.length : 0;
   const done = mainAnswered;
   const pct = Math.round((done / total) * 100);
   $progFill().style.width = pct + '%';
@@ -1864,8 +1865,8 @@ function tick() {
 }
 
 function showNormalQ() {
-  const source = archModeEnabled ? ARCH_QUESTIONS : QS;
-  const q = source[qIdx];
+   const source = (archModeEnabled && Array.isArray(ARCH_QUESTIONS)) ? ARCH_QUESTIONS : (Array.isArray(QS)) ? QS : [];
+   const q = source[qIdx];
   const isLast = qIdx === (source.length - 1);
   // Show 25/25 on the last question
   if (isLast) {
@@ -2375,8 +2376,8 @@ function triggerJumpscare(name) {
 
 
 function pickOpt(i) {
-  const source = archModeEnabled ? ARCH_QUESTIONS : QS;
-  const q = source[qIdx];
+   const source = (archModeEnabled && Array.isArray(ARCH_QUESTIONS)) ? ARCH_QUESTIONS : (Array.isArray(QS)) ? QS : [];
+   const q = source[qIdx];
   const o = q.opts[i];
   if (selectedOpts.includes(i)) {
     // Deselecting
@@ -2421,11 +2422,11 @@ function skipQuestion() {
 
 function goBack() {
   if (!history.length) return;
-  window._backCount = (window._backCount || 0) + 1;
-  const prev = history.pop();
-  if (!prev.skipped) {
-    const source = archModeEnabled ? ARCH_QUESTIONS : QS;
-    const q = source[prev.qIdx];
+   window._backCount = (window._backCount || 0) + 1;
+   const prev = history.pop();
+   if (!prev.skipped) {
+     const source = (archModeEnabled && Array.isArray(ARCH_QUESTIONS)) ? ARCH_QUESTIONS : (Array.isArray(QS)) ? QS : [];
+     const q = source[prev.qIdx];
     prev.selected.forEach(i => {
       const o = q.opts[i];
       Object.entries(o.v).forEach(([dim,val]) => {
@@ -2902,9 +2903,10 @@ function skipLike() { followUpSelected = []; likeDone = true; tick(); }
 function skipDislike() { followUpSelected = []; dislikeDone = true; tick(); }
 
 function shareAnswers() {
-  const parts = history.map(h => {
-    if (h.skipped) return null;
-    const q = QS[h.qIdx];
+   const parts = history.map(h => {
+     if (h.skipped) return null;
+     const source = (archModeEnabled && Array.isArray(ARCH_QUESTIONS)) ? ARCH_QUESTIONS : (Array.isArray(QS)) ? QS : [];
+     const q = source[h.qIdx];
     const letters = h.selected.map(i => q.opts[i].l).join('');
     return 'Q' + q.id + letters;
   }).filter(Boolean);

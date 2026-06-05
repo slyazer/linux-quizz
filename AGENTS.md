@@ -51,11 +51,10 @@ Single-file HTML quiz app (~4000+ lines) that matches users to Linux distributio
 ### Known Bugs / Edge Cases
 1. **Q1 has only one option (A):** "Never used it" — no options for experienced users. The "Already Tried" input compensates.
 2. **Brand tag has trailing space:** `'// I.Love.Linux '` — intentional or oversight?
-3. **`shareAnswers` uses normal QS array in Arch mode:** Question IDs won't match the absurd Arch questions. Minor, Arch mode is a joke anyway.
-4. **Cookie banner inline script uses `document.write`:** Works but flagged by linters. Acceptable for a single-file project.
-5. **Some interactive elements still lack `tabindex`:** The main start-page links are covered, but dynamic elements inside `swap()` (like the distro detail back-link) may lose `tabindex` after re-render. Low priority.
-6. **`swap()` focus management works but `preventScroll: true` may not be respected in all browsers:** Safari sometimes ignores it. Minor UX quirk.
-7. **Tier list bangers excluded AND tried penalty:** Bangers get both injected signals AND the -25 `triedDistros` penalty in the dimension algo, which slightly contradicts the "find similar" intent. Working as designed but could be refined.
+3. **Cookie banner inline script uses `document.write`:** Works but flagged by linters. Acceptable for a single-file project.
+4. **Some interactive elements still lack `tabindex`:** The main start-page links are covered, but dynamic elements inside `swap()` (like the distro detail back-link) may lose `tabindex` after re-render. Low priority.
+5. **`swap()` focus management works but `preventScroll: true` may not be respected in all browsers:** Safari sometimes ignores it. Minor UX quirk.
+6. **Tier list bangers excluded AND tried penalty:** Bangers get both injected signals AND the -25 `triedDistros` penalty in the dimension algo, which slightly contradicts the "find similar" intent. Working as designed but could be refined.
 
 ### Design Decisions
 - **Single file by design:** No build step, no dependencies beyond Google Fonts and SimpleIcons CDN. Easy to deploy, share, and fork.
@@ -71,14 +70,13 @@ Single-file HTML quiz app (~4000+ lines) that matches users to Linux distributio
 - **Ubuntu variants removed:** The extra DE-choosing screen was unnecessary friction. Users go straight to the Ubuntu detail page.
 
 ## What To Work On Next
-1. **`shareAnswers` Arch mode support** — use `ARCH_QUESTIONS` IDs when arch mode is active
-2. **Persist tier list across retakes** — currently resets on `beginQuiz()`, maybe allow carry-over
-3. **Consider reducing the tried penalty for bangers** — the -25 conflicts with signal injection, could be -10 or removed entirely
-4. **Add more dynamic `tabindex` injection** — elements inside `swap()` lose their `tabindex` on re-render
-5. **French translation audit** — some newer strings may be missing French equivalents
+1. **Persist tier list across retakes** — currently resets on `beginQuiz()`, maybe allow carry-over
+2. **Consider reducing the tried penalty for bangers** — the -25 conflicts with signal injection, could be -10 or removed entirely
+3. **Add more dynamic `tabindex` injection** — elements inside `swap()` lose their `tabindex` on re-render
+4. **French translation audit** — some newer strings may be missing French equivalents
 
 ## Communication Style
-- The project owner is called **babe**. Address him that way.
+- The project owner is called **Salah Abdeslam**. Address him that way.
 - Update this AGENTS.md whenever you make meaningful code changes.
 - Use FIND/REPLACE blocks for all code changes.
 - Be concise. Don't over-explain.
